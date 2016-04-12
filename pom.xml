@@ -23,9 +23,8 @@
 
    <licenses>
       <license>
-         <name>Apache 2</name>
-         <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-         <distribution>repo</distribution>
+         <name>MIT</name>
+         <url>http://opensource.org/licenses/MIT</url>
       </license>
    </licenses>
 
@@ -37,6 +36,7 @@
 
    <modules>
       <module>hibernate</module>
+      <module>wildfly-mariadb</module>
    </modules>
 
    <!-- Logging -->
