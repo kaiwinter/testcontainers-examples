@@ -1,0 +1,23 @@
+language: java
+jdk:
+  - oraclejdk8
+sudo: required
+services:
+  - docker
+
+before_install:
+  - env
+# Pre-fetch docker images - seems to need to be done before docker env vars are set
+  - docker pull mysql:latest
+  - docker pull kaiwinter/wildfly10-mariadb:latest
+# Update env vars required by testcontainers
+  - export DOCKER_HOST=tcp://127.0.0.1:2375
+  - export DOCKER_TLS_VERIFY=0
+  - env
+
+script:
+  - mvn test
+
+cache:
+  directories:
+    - '$HOME/.m2/repository'
