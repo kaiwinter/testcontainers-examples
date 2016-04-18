@@ -9,7 +9,7 @@
 
       <properties>
          <property name="javax.persistence.jdbc.driver" value="org.testcontainers.jdbc.ContainerDatabaseDriver" />
-         <property name="javax.persistence.jdbc.url" value="jdbc:tc:mysql://doesntmatter/test?TC_INITSCRIPT=ddl.sql" />
+         <property name="javax.persistence.jdbc.url" value="jdbc:tc:mysql:5.7://doesntmatter/test?TC_INITSCRIPT=ddl.sql" />
          <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
       </properties>
    </persistence-unit>

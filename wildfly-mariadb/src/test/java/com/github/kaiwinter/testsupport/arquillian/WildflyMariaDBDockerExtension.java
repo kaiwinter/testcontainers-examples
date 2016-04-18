@@ -29,7 +29,7 @@ public final class WildflyMariaDBDockerExtension implements LoadableExtension {
     */
    public static final class LoadContainerConfiguration {
 
-      private static final String DOCKER_IMAGE = "kaiwinter/wildfly10-mariadb:latest";
+      private static final String DOCKER_IMAGE = "kaiwinter/wildfly10-mariadb:1.0";
 
       private static final int WILDFLY_HTTP_PORT = 8080;
       private static final int WILDFLY_MANAGEMENT_PORT = 9990;
