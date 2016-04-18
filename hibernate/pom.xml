@@ -44,7 +44,7 @@
       <dependency>
          <groupId>org.testcontainers</groupId>
          <artifactId>mysql</artifactId>
-         <version>1.0.3</version>
+         <version>${testcontainers.version}</version>
          <scope>test</scope>
       </dependency>
 
