@@ -44,6 +44,12 @@
          <version>5.1.38</version>
       </dependency>
 
+      <dependency>
+         <groupId>javax</groupId>
+         <artifactId>javaee-api</artifactId>
+         <version>7.0</version>
+      </dependency>
+
       <!-- Test dependencies -->
       <dependency>
          <groupId>org.wildfly</groupId>
@@ -91,12 +97,6 @@
          <groupId>org.testcontainers</groupId>
          <artifactId>mysql</artifactId>
          <version>${testcontainers.version}</version>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>javax</groupId>
-         <artifactId>javaee-api</artifactId>
-         <version>7.0</version>
          <scope>test</scope>
       </dependency>
 
