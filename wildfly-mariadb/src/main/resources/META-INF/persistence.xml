@@ -6,7 +6,7 @@
       <provider>org.hibernate.ejb.HibernatePersistence</provider>
       <jta-data-source>java:jboss/datasources/RIM</jta-data-source>
       
-      <class>com.github.kaiwinter.testcontainers.hibernate.db.entity.User</class>
+      <class>com.github.kaiwinter.testcontainers.wildfly.db.entity.User</class>
 
       <properties>
          <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect" />

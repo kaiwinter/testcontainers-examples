@@ -32,7 +32,8 @@ public final class UserTest {
 
    @Test
    public void testSaveAndLoad() {
-      User user = new User("user 1");
+      User user = new User();
+      user.setUsername("user 1");
 
       entityManager.getTransaction().begin();
       entityManager.persist(user);

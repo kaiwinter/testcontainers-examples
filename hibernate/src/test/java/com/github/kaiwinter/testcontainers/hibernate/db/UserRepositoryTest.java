@@ -21,7 +21,7 @@ import com.github.kaiwinter.testcontainers.hibernate.db.entity.UserTest;
  * {@link org.testcontainers.jdbc.ContainerDatabaseDriver} from the testcontainers library. This driver will start a
  * Docker container with a MySQL database. Hibernate then creates a Persistence Unit for this docker-database. The
  * library di-instantiator is used to place the Persistence Unit in the {@link UserRepository} to test its logic.
- * 
+ *
  * @see {@link UserTest}
  */
 public final class UserRepositoryTest {
@@ -64,13 +64,22 @@ public final class UserRepositoryTest {
    public void testSave() {
       UserRepository userRepository = getCleanUserRepository();
 
-      User user = new User("user 1");
+      User user = new User();
+      user.setUsername("user 1");
       userRepository.save(user);
 
       LOGGER.info("User persisted with ID {}", user.getId());
 
       User userFromDb = userRepository.find(user.getId());
       assertEquals(user.getUsername(), userFromDb.getUsername());
+   }
+
+   @Test
+   public void testFindNonAdmin() {
+      UserRepository userRepository = getCleanUserRepository();
+
+      Collection<User> users = userRepository.findAllNonAdmin();
+      assertEquals(2, users.size());
    }
 
    private UserRepository getCleanUserRepository() {

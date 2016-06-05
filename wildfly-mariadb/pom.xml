@@ -11,13 +11,6 @@
       <version>1.0.0-SNAPSHOT</version>
    </parent>
 
-   <repositories>
-      <repository>
-         <id>jitpack.io</id>
-         <url>https://jitpack.io</url>
-      </repository>
-   </repositories>
-
    <dependencyManagement>
       <dependencies>
          <dependency>
@@ -51,43 +44,22 @@
          <version>5.1.38</version>
       </dependency>
 
-      <dependency>
-         <groupId>org.wildfly</groupId>
-         <artifactId>wildfly-spec-api</artifactId>
-         <version>10.0.0.CR4</version>
-         <type>pom</type>
-         <scope>provided</scope>
-      </dependency>
-
       <!-- Test dependencies -->
-      <dependency>
-         <groupId>org.testcontainers</groupId>
-         <artifactId>mysql</artifactId>
-         <version>${testcontainers.version}</version>
-         <scope>test</scope>
-      </dependency>
-
       <dependency>
          <groupId>org.wildfly</groupId>
          <artifactId>wildfly-arquillian-container-remote</artifactId>
          <version>8.2.1.Final</version>
          <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.wildfly</groupId>
-         <artifactId>wildfly-arquillian-protocol-jmx</artifactId>
-         <version>8.2.1.Final</version>
-         <scope>test</scope>
+         <exclusions>
+            <exclusion>
+                <groupId>sun.jdk</groupId>
+                <artifactId>jconsole</artifactId>
+            </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
          <groupId>org.jboss.arquillian.junit</groupId>
          <artifactId>arquillian-junit-container</artifactId>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.wildfly</groupId>
-         <artifactId>wildfly-arquillian-common</artifactId>
-         <version>8.2.1.Final</version>
          <scope>test</scope>
       </dependency>
       <dependency>
@@ -116,11 +88,12 @@
       </dependency>
 
       <dependency>
-         <groupId>com.github.kaiwinter</groupId>
-         <artifactId>di-instantiator</artifactId>
-         <version>v1.1.0</version>
+         <groupId>org.testcontainers</groupId>
+         <artifactId>mysql</artifactId>
+         <version>${testcontainers.version}</version>
          <scope>test</scope>
       </dependency>
+
    </dependencies>
 
 </project>

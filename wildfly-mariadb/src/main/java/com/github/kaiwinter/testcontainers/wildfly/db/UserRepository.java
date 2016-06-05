@@ -1,4 +1,4 @@
-package com.github.kaiwinter.testcontainers.hibernate.db;
+package com.github.kaiwinter.testcontainers.wildfly.db;
 
 import java.util.Collection;
 
@@ -6,31 +6,27 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import com.github.kaiwinter.testcontainers.hibernate.db.entity.User;
+import com.github.kaiwinter.testcontainers.wildfly.db.entity.User;
 
-public final class UserRepository implements IUserRepository {
+public final class UserRepository {
 
    @PersistenceContext
    private EntityManager entityManager;
 
-   @Override
    public User find(int id) {
       return entityManager.find(User.class, id);
    }
 
-   @Override
    public Collection<User> findAll() {
-      Query query = entityManager.createQuery("SELECT u FROM " + User.class.getSimpleName() + " u");
+      Query query = entityManager.createQuery("SELECT u FROM User u");
       return query.getResultList();
    }
 
-   @Override
    public User save(User user) {
       entityManager.persist(user);
       return user;
    }
 
-   @Override
    public void delete(User user) {
       entityManager.remove(user);
    }

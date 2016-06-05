@@ -1,4 +1,4 @@
-package com.github.kaiwinter.testcontainers.arquillian;
+package com.github.kaiwinter.testcontainers.wildfly.db;
 
 import static org.junit.Assert.assertEquals;
 
@@ -17,9 +17,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.github.kaiwinter.testcontainers.hibernate.db.IUserRepository;
-import com.github.kaiwinter.testcontainers.hibernate.db.UserRepository;
-import com.github.kaiwinter.testcontainers.hibernate.db.entity.User;
+import com.github.kaiwinter.testcontainers.wildfly.db.entity.User;
 import com.github.kaiwinter.testsupport.arquillian.WildflyMariaDBDockerExtension;
 
 /**
@@ -32,9 +30,9 @@ public final class UserRepositoryTest {
 
    @Deployment
    public static JavaArchive createDeployment() {
-      JavaArchive jar = ShrinkWrap.create(JavaArchive.class)
-         .addClasses(IUserRepository.class, UserRepository.class, User.class)
-         .addAsResource("META-INF/persistence.xml")
+      JavaArchive jar = ShrinkWrap.create(JavaArchive.class) //
+         .addClasses(UserRepository.class, User.class) //
+         .addAsResource("META-INF/persistence.xml") //
          .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
       return jar;
    }
@@ -81,7 +79,8 @@ public final class UserRepositoryTest {
    @Test
    public void testSave() throws NotSupportedException, SystemException {
       transaction.begin();
-      User user = new User("test-user");
+      User user = new User();
+      user.setUsername("test-user");
       userRepository.save(user);
       assertEquals(4, userRepository.findAll().size());
       transaction.rollback();

@@ -1,4 +1,4 @@
-package com.github.kaiwinter.testcontainers.hibernate.db.entity;
+package com.github.kaiwinter.testcontainers.wildfly.db.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
