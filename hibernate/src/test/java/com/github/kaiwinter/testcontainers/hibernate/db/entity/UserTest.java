@@ -27,11 +27,11 @@ public final class UserTest {
 
       entityManager.getTransaction().begin();
       entityManager.persist(user);
+      entityManager.getTransaction().commit();
       LOGGER.info("User persisted with ID {}", user.getId());
 
       User userFromDb = entityManager.find(User.class, user.getId());
 
       assertEquals(user.getUsername(), userFromDb.getUsername());
-      entityManager.getTransaction().rollback();
    }
 }
