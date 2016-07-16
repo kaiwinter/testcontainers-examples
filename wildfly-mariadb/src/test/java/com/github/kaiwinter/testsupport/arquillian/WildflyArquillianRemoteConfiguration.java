@@ -1,4 +1,4 @@
-package com.github.kaiwinter.testsupport.arquillian.config;
+package com.github.kaiwinter.testsupport.arquillian;
 
 /**
  * Defines configuration property names of the Arquillian adapter "wildfly-arquillian-container-remote".

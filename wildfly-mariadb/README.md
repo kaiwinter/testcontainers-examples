@@ -6,7 +6,7 @@ For the Arquillian deployment wildfly-arquillian-container-remote is used.
 
 The hard part is the dynamic configuration of Arquillian to deploy to the Wildfly.
 Arquillian is configured by the file `arquillian.xml` and it cannot be changed by an API dynamically.
-But there is the possibility to register a `org.jboss.arquillian.core.spi.LoadableExtension` service which can register a listener on the configuration process ([WildflyMariaDBDockerExtension](https://github.com/kaiwinter/testcontainers-examples/blob/master/wildfly-mariadb/src/test/java/com/github/kaiwinter/testsupport/arquillian/WildflyMariaDBDockerExtension.java)).
+But there is the possibility to register a `org.jboss.arquillian.core.spi.LoadableExtension` which registers a listener on the configuration process (see [WildflyMariaDBDockerExtension](https://github.com/kaiwinter/testcontainers-examples/blob/master/wildfly-mariadb/src/test/java/com/github/kaiwinter/testsupport/arquillian/WildflyMariaDBDockerExtension.java)).
 Arquillian can then be completely configured by the listener class and the [`arquillian.xml`](https://github.com/kaiwinter/testcontainers-examples/blob/master/wildfly-mariadb/src/test/resources/arquillian.xml) is almost empty:
 ```xml
 <arquillian xmlns="http://jboss.org/schema/arquillian" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jboss.org/schema/arquillian">
@@ -16,25 +16,40 @@ Arquillian can then be completely configured by the listener class and the [`arq
 </arquillian>
 ```
 
-This is how the test class looks like:
+This is how the test class looks like. The unit test inserts it's test data by [DBUnit](http://dbunit.sourceforge.net) which empties the database before the data is inserted. That way each unit test can insert different data.
 ```java
 @RunWith(Arquillian.class)
-public final class UserServiceTest {
-
-   @Deployment
-   public static JavaArchive createDeployment() {
-      JavaArchive jar = ShrinkWrap.create(JavaArchive.class) //
-         .addClasses(UserService.class, UserRepository.class, User.class) //
-         .addAsResource("META-INF/persistence.xml") //
-         .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-      return jar;
-   }
+public class UserServiceTest {
 
    @Inject
    private UserService userService;
 
+   @PersistenceContext
+   private EntityManager entityManager;
+
+   @Deployment
+   public static EnterpriseArchive createDeployment() {
+      WebArchive war = ShrinkWrap.create(WebArchive.class) //
+         .addClasses(UserService.class, UserRepository.class, User.class) //
+         .addClasses(UserServiceTest.class, DockerDatabaseTestUtil.class) //
+         .addAsResource("META-INF/persistence.xml") //
+         .addAsResource("testdata.xml") //
+         .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+
+      File[] pomDependencies = Maven.resolver() //
+         .loadPomFromFile("pom.xml").importDependencies(ScopeType.TEST) //
+         .resolve().withTransitivity().asFile();
+
+      EnterpriseArchive ear = ShrinkWrap.create(EnterpriseArchive.class) //
+         .addAsModule(war) //
+         .addAsLibraries(pomDependencies);
+
+      return ear;
+   }
+
    @Test
    public void testSumOfLogins() {
+      DockerDatabaseTestUtil.insertDbUnitTestdata(entityManager, getClass().getResourceAsStream("/testdata.xml"));
       int sumOfLogins = userService.calculateSumOfLogins();
       assertEquals(9, sumOfLogins);
    }

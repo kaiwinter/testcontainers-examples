@@ -2,9 +2,12 @@ package com.github.kaiwinter.testcontainers.wildfly.db;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
 import java.util.Collection;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.NotSupportedException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
@@ -13,12 +16,17 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import org.jboss.shrinkwrap.resolver.api.maven.ScopeType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.github.kaiwinter.testcontainers.wildfly.core.UserService;
 import com.github.kaiwinter.testcontainers.wildfly.db.entity.User;
 import com.github.kaiwinter.testsupport.arquillian.WildflyMariaDBDockerExtension;
+import com.github.kaiwinter.testsupport.db.DockerDatabaseTestUtil;
 
 /**
  * Tests for {@link UserRepository}. The class {@link WildflyMariaDBDockerExtension} registers an arqullian observer
@@ -28,28 +36,43 @@ import com.github.kaiwinter.testsupport.arquillian.WildflyMariaDBDockerExtension
 @RunWith(Arquillian.class)
 public final class UserRepositoryTest {
 
-   @Deployment
-   public static JavaArchive createDeployment() {
-      JavaArchive jar = ShrinkWrap.create(JavaArchive.class) //
-         .addClasses(UserRepository.class, User.class) //
-         .addAsResource("META-INF/persistence.xml") //
-         .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-      return jar;
-   }
-
    @Inject
    private UserRepository userRepository;
 
    @Inject
    private UserTransaction transaction;
 
+   @PersistenceContext
+   private EntityManager entityManager;
+
+   @Deployment
+   public static EnterpriseArchive createDeployment() {
+      WebArchive war = ShrinkWrap.create(WebArchive.class) //
+         .addClasses(UserService.class, UserRepository.class, User.class) //
+         .addClasses(UserRepositoryTest.class, DockerDatabaseTestUtil.class) //
+         .addAsResource("META-INF/persistence.xml") //
+         .addAsResource("testdata.xml") //
+         .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+
+      File[] pomDependencies = Maven.resolver() //
+         .loadPomFromFile("pom.xml").importDependencies(ScopeType.TEST) //
+         .resolve().withTransitivity().asFile();
+
+      EnterpriseArchive ear = ShrinkWrap.create(EnterpriseArchive.class) //
+         .addAsModule(war) //
+         .addAsLibraries(pomDependencies);
+
+      return ear;
+   }
+
    /**
     * Loads a user by its ID.
     */
    @Test
    public void testFind() {
-      User user = userRepository.find(2);
-      assertEquals("admin", user.getUsername());
+      DockerDatabaseTestUtil.insertDbUnitTestdata(entityManager, getClass().getResourceAsStream("/testdata.xml"));
+      User user = userRepository.findByUsername("admin");
+      assertEquals(3, user.getLoginCount());
    }
 
    /**
@@ -57,6 +80,7 @@ public final class UserRepositoryTest {
     */
    @Test
    public void testFindAll() {
+      DockerDatabaseTestUtil.insertDbUnitTestdata(entityManager, getClass().getResourceAsStream("/testdata.xml"));
       Collection<User> findAll = userRepository.findAll();
       assertEquals(3, findAll.size());
    }
@@ -66,8 +90,9 @@ public final class UserRepositoryTest {
     */
    @Test
    public void testDelete() throws NotSupportedException, SystemException {
+      DockerDatabaseTestUtil.insertDbUnitTestdata(entityManager, getClass().getResourceAsStream("/testdata.xml"));
       transaction.begin();
-      User user = userRepository.find(2);
+      User user = userRepository.findByUsername("admin");
       userRepository.delete(user);
       assertEquals(2, userRepository.findAll().size());
       transaction.rollback();
@@ -78,6 +103,7 @@ public final class UserRepositoryTest {
     */
    @Test
    public void testSave() throws NotSupportedException, SystemException {
+      DockerDatabaseTestUtil.insertDbUnitTestdata(entityManager, getClass().getResourceAsStream("/testdata.xml"));
       transaction.begin();
       User user = new User();
       user.setUsername("test-user");

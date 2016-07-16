@@ -20,6 +20,13 @@
             <scope>import</scope>
             <type>pom</type>
          </dependency>
+         <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-bom</artifactId>
+            <version>2.2.2</version>
+            <scope>import</scope>
+            <type>pom</type>
+         </dependency>
       </dependencies>
    </dependencyManagement>
 
@@ -30,18 +37,21 @@
          <groupId>org.hibernate</groupId>
          <artifactId>hibernate-core</artifactId>
          <version>5.2.1.Final</version>
+         <scope>provided</scope>
       </dependency>
 
       <dependency>
          <groupId>mysql</groupId>
          <artifactId>mysql-connector-java</artifactId>
-         <version>5.1.38</version>
+         <version>5.1.39</version>
+         <scope>provided</scope>
       </dependency>
 
       <dependency>
          <groupId>javax</groupId>
          <artifactId>javaee-api</artifactId>
          <version>7.0</version>
+         <scope>provided</scope>
       </dependency>
 
       <!-- Test dependencies -->
@@ -52,10 +62,10 @@
          <scope>test</scope>
          <exclusions>
             <exclusion>
-                <groupId>sun.jdk</groupId>
-                <artifactId>jconsole</artifactId>
+               <groupId>sun.jdk</groupId>
+               <artifactId>jconsole</artifactId>
             </exclusion>
-        </exclusions>
+         </exclusions>
       </dependency>
       <dependency>
          <groupId>org.jboss.arquillian.junit</groupId>
@@ -84,6 +94,10 @@
                <artifactId>jcl-over-slf4j</artifactId>
                <groupId>org.slf4j</groupId>
             </exclusion>
+            <exclusion>
+               <groupId>org.codehaus.plexus</groupId>
+               <artifactId>plexus-utils</artifactId>
+            </exclusion>
          </exclusions>
       </dependency>
 
@@ -94,6 +108,31 @@
          <scope>test</scope>
       </dependency>
 
+      <dependency>
+         <groupId>org.dbunit</groupId>
+         <artifactId>dbunit</artifactId>
+         <version>2.5.2</version>
+         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.apache.maven</groupId>
+         <artifactId>maven-model</artifactId>
+         <version>3.3.9</version>
+         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.shrinkwrap.resolver</groupId>
+         <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+         <scope>test</scope>
+         <exclusions>
+            <exclusion>
+               <groupId>org.codehaus.plexus</groupId>
+               <artifactId>plexus-utils</artifactId>
+            </exclusion>
+         </exclusions>
+      </dependency>
    </dependencies>
 
 </project>

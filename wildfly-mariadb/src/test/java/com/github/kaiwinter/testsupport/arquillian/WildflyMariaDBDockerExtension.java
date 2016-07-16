@@ -11,8 +11,8 @@ import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.testcontainers.containers.GenericContainer;
 
-import com.github.kaiwinter.testsupport.arquillian.config.WildflyArquillianRemoteConfiguration.ContainerConfiguration;
-import com.github.kaiwinter.testsupport.arquillian.config.WildflyArquillianRemoteConfiguration.ContainerConfiguration.ServletProtocolDefinition;
+import com.github.kaiwinter.testsupport.arquillian.WildflyArquillianRemoteConfiguration.ContainerConfiguration;
+import com.github.kaiwinter.testsupport.arquillian.WildflyArquillianRemoteConfiguration.ContainerConfiguration.ServletProtocolDefinition;
 
 /**
  * Starts a docker container and configures Arquillian to use Wildfly in the docker container.
@@ -29,7 +29,7 @@ public final class WildflyMariaDBDockerExtension implements LoadableExtension {
     */
    public static final class LoadContainerConfiguration {
 
-      private static final String DOCKER_IMAGE = "kaiwinter/wildfly10-mariadb:1.0";
+      private static final String DOCKER_IMAGE = "kaiwinter/wildfly10-mariadb:1.1";
 
       private static final int WILDFLY_HTTP_PORT = 8080;
       private static final int WILDFLY_MANAGEMENT_PORT = 9990;
