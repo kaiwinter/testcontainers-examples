@@ -1,6 +1,13 @@
 package com.github.kaiwinter.testsupport.arquillian;
 
-import org.flywaydb.core.Flyway;
+import java.io.IOException;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+import javax.script.ScriptException;
+
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.config.descriptor.api.ProtocolDef;
 import org.jboss.arquillian.container.spi.Container;
@@ -10,9 +17,12 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.jdbc.ext.ScriptUtils;
 
 import com.github.kaiwinter.testsupport.arquillian.WildflyArquillianRemoteConfiguration.ContainerConfiguration;
 import com.github.kaiwinter.testsupport.arquillian.WildflyArquillianRemoteConfiguration.ContainerConfiguration.ServletProtocolDefinition;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 
 /**
  * Starts a docker container and configures Arquillian to use Wildfly in the docker container.
@@ -34,6 +44,8 @@ public final class WildflyMariaDBDockerExtension implements LoadableExtension {
       private static final int WILDFLY_HTTP_PORT = 8080;
       private static final int WILDFLY_MANAGEMENT_PORT = 9990;
       private static final int MARIADB_PORT = 3306;
+
+      private static final String DDL_FILE = "DDL.sql";
 
       /**
        * Method which observes {@link ContainerRegistry}. Gets called by Arquillian at startup time.
@@ -72,14 +84,17 @@ public final class WildflyMariaDBDockerExtension implements LoadableExtension {
       }
 
       private void setupDb(GenericContainer dockerContainer) {
-         Integer port3306 = dockerContainer.getMappedPort(MARIADB_PORT);
-
          String containerIpAddress = dockerContainer.getContainerIpAddress();
+         Integer port3306 = dockerContainer.getMappedPort(MARIADB_PORT);
          String connectionString = "jdbc:mysql://" + containerIpAddress + ":" + port3306 + "/test";
-         Flyway flyway = new Flyway();
-         flyway.setDataSource(connectionString, "admin", "admin");
-         flyway.setLocations("filesystem:src/test/resources");
-         flyway.migrate();
+
+         try (Connection connection = DriverManager.getConnection(connectionString, "admin", "admin");) {
+            URL resource = Resources.getResource(DDL_FILE);
+            String sql = Resources.toString(resource, Charsets.UTF_8);
+            ScriptUtils.executeSqlScript(connection, "", sql);
+         } catch (SQLException | ScriptException | IOException e) {
+            throw new RuntimeException(e);
+         }
       }
    }
 }

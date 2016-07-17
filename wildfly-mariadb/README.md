@@ -1,11 +1,12 @@
 ## testcontainers-examples: wildfly-mariadb
 
-For these tests a prepared docker image is used which contains a Wildfly 10 and a MariaDB installation: [kaiwinter/wildfly10-mariadb](https://hub.docker.com/r/kaiwinter/wildfly10-mariadb/).
+For these tests a docker image is used which contains a Wildfly 10 and a MariaDB installation: [kaiwinter/wildfly10-mariadb](https://hub.docker.com/r/kaiwinter/wildfly10-mariadb/).
 Wildfly is configured to use the MariaDB and a management user is set-up to let Arquillian deploy to this server.
-For the Arquillian deployment wildfly-arquillian-container-remote is used. 
+For the Arquillian deployment `wildfly-arquillian-container-remote` is used. 
 
-The hard part is the dynamic configuration of Arquillian to deploy to the Wildfly.
-Arquillian is configured by the file `arquillian.xml` and it cannot be changed by an API dynamically.
+The hard part is the dynamic configuration of Arquillian to deploy the application to Wildfly.
+This is necessary because testcontainers maps the real application server and database server ports to random ports to support the parallel use of multiple containers.
+Arquillian is configured by the file `arquillian.xml` and it cannot be changed by an API dynamically [[GitHub Issue](https://github.com/wildfly/wildfly-arquillian/issues/72)].
 But there is the possibility to register a `org.jboss.arquillian.core.spi.LoadableExtension` which registers a listener on the configuration process (see [WildflyMariaDBDockerExtension](https://github.com/kaiwinter/testcontainers-examples/blob/master/wildfly-mariadb/src/test/java/com/github/kaiwinter/testsupport/arquillian/WildflyMariaDBDockerExtension.java)).
 Arquillian can then be completely configured by the listener class and the [`arquillian.xml`](https://github.com/kaiwinter/testcontainers-examples/blob/master/wildfly-mariadb/src/test/resources/arquillian.xml) is almost empty:
 ```xml
@@ -15,8 +16,9 @@ Arquillian can then be completely configured by the listener class and the [`arq
    </container>
 </arquillian>
 ```
+The listener class ([WildflyMariaDBDockerExtension](https://github.com/kaiwinter/testcontainers-examples/blob/master/wildfly-mariadb/src/test/java/com/github/kaiwinter/testsupport/arquillian/WildflyMariaDBDockerExtension.java)) starts the docker container by the library [testcontainers](https://github.com/testcontainers/testcontainers-java), configures Arquillian, and inserts the DB model using a JDBC connection. Then the normal Arquillian test runs which means `wildfly-arquillian-container-remote` deploys the war file to the server and runs the `@Test`-methods.
 
-This is how the test class looks like. The unit test inserts it's test data by [DBUnit](http://dbunit.sourceforge.net) which empties the database before the data is inserted. That way each unit test can insert different data.
+This is how the test class looks like. There is no difference from a normal Arquillian test. The unit test inserts it's test data by [DBUnit](http://dbunit.sourceforge.net) which empties the database before the data is inserted. That way each unit test can insert different data.
 ```java
 @RunWith(Arquillian.class)
 public class UserServiceTest {
@@ -55,5 +57,3 @@ public class UserServiceTest {
    }
 }
 ```
-
-The listener class starts the docker container by the library [testcontainers](https://github.com/testcontainers/testcontainers-java) and inserts the DB model by using [Flyway](http://flywaydb.org/). Then the Arquillian remote extension deploys the war file to the server and runs the tests.
