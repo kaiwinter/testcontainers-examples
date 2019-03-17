@@ -17,13 +17,13 @@
       <dependency>
          <groupId>org.hibernate</groupId>
          <artifactId>hibernate-core</artifactId>
-         <version>5.2.1.Final</version>
+         <version>5.4.2.Final</version>
       </dependency>
 
       <dependency>
          <groupId>mysql</groupId>
          <artifactId>mysql-connector-java</artifactId>
-         <version>5.1.39</version>
+         <version>5.1.47</version>
       </dependency>
 
 
@@ -41,22 +41,12 @@
          <version>1.1.1</version>
          <scope>test</scope>
       </dependency>
-      
+
       <dependency>
          <groupId>org.dbunit</groupId>
          <artifactId>dbunit</artifactId>
-         <version>2.5.2</version>
+         <version>2.6.0</version>
          <scope>test</scope>
-         <exclusions>
-            <exclusion>
-                 <artifactId>stax-api</artifactId>
-                 <groupId>stax</groupId>
-            </exclusion>
-            <exclusion>
-                 <artifactId>poi-ooxml</artifactId>
-                 <groupId>org.apache.poi</groupId>
-            </exclusion>
-         </exclusions>
       </dependency>
    </dependencies>
 

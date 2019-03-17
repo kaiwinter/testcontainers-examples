@@ -8,3 +8,4 @@ Currently there are these examples:
 
 - [Testing a Hibernate-managed DB layer](https://github.com/kaiwinter/testcontainers-examples/tree/master/hibernate)
 - [Testing a Java EE application in Wildfly 10 with DB access](https://github.com/kaiwinter/testcontainers-examples/tree/master/wildfly-mariadb)
+- [Testing a JSF UI using Docker](https://github.com/kaiwinter/testcontainers-examples/tree/master/jsf)
