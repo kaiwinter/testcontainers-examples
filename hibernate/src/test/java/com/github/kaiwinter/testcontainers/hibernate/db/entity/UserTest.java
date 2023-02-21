@@ -2,8 +2,8 @@ package com.github.kaiwinter.testcontainers.hibernate.db.entity;
 
 import static org.junit.Assert.assertEquals;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Persistence;
 
 import org.junit.Test;
 import org.slf4j.Logger;

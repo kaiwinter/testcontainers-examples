@@ -4,9 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Collection;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.PersistenceContext;
 
 import org.junit.Before;
 import org.junit.Test;

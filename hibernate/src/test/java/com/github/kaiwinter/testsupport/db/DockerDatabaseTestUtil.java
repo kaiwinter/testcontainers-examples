@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import javax.script.ScriptException;
 
 import org.dbunit.DatabaseUnitException;
