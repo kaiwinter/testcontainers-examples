@@ -45,7 +45,7 @@ public final class WildflyDockerExtension implements LoadableExtension {
        */
       public void registerInstance(@Observes ContainerRegistry registry, ServiceLoader serviceLoader) {
          GenericContainer dockerContainer = new GenericContainer(DOCKER_IMAGE) //
-               .withExposedPorts(WILDFLY_MANAGEMENT_PORT);
+               .withExposedPorts(WILDFLY_HTTP_PORT, WILDFLY_MANAGEMENT_PORT);
          dockerContainer.start();
 
          configureArquillianForRemoteWildfly(dockerContainer, registry);
