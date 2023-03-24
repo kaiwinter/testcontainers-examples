@@ -1,21 +1,20 @@
 package com.github.kaiwinter.testcontainers.hibernate.db;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collection;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.PersistenceContext;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.kaiwinter.instantiator.InjectionObjectFactory;
 import com.github.kaiwinter.testcontainers.hibernate.db.entity.User;
-import com.github.kaiwinter.testcontainers.hibernate.db.entity.UserTest;
 import com.github.kaiwinter.testsupport.db.DockerDatabaseTestUtil;
 
 /**
@@ -26,7 +25,7 @@ import com.github.kaiwinter.testsupport.db.DockerDatabaseTestUtil;
  *
  * @see {@link UserTest}
  */
-public final class UserRepositoryTest {
+final class UserRepositoryTest {
    private static final Logger LOGGER = LoggerFactory.getLogger(UserRepositoryTest.class);
 
    private static EntityManager entityManager = Persistence.createEntityManagerFactory("TestPU", null)
@@ -40,7 +39,7 @@ public final class UserRepositoryTest {
       userRepository = factory.getInstance(UserRepository.class);
    }
 
-   @Before
+   @BeforeEach
    public void setup() {
       // Rolling back transaction will make tests after a failed test run correctly
       if (entityManager.getTransaction().isActive()) {
@@ -54,7 +53,7 @@ public final class UserRepositoryTest {
     * Loads a user by username.
     */
    @Test
-   public void testFind() {
+   void testFind() {
       DockerDatabaseTestUtil.insertDbUnitTestdata(entityManager, getClass().getResourceAsStream("/testdata.xml"));
 
       User user = userRepository.findByUsername("admin");
@@ -65,7 +64,7 @@ public final class UserRepositoryTest {
     * Loads all users and counts the result.
     */
    @Test
-   public void testFindAll() {
+   void testFindAll() {
       DockerDatabaseTestUtil.insertDbUnitTestdata(entityManager, getClass().getResourceAsStream("/testdata.xml"));
 
       Collection<User> findAll = userRepository.findAll();
@@ -76,7 +75,7 @@ public final class UserRepositoryTest {
     * Deletes one User and counts the remaining users.
     */
    @Test
-   public void testDelete() {
+   void testDelete() {
       DockerDatabaseTestUtil.insertDbUnitTestdata(entityManager, getClass().getResourceAsStream("/testdata.xml"));
 
       User user = userRepository.findByUsername("user");
@@ -92,7 +91,7 @@ public final class UserRepositoryTest {
     * the database.
     */
    @Test
-   public void testSave() {
+   void testSave() {
       User user = new User();
       user.setUsername("user 1");
 
@@ -107,7 +106,7 @@ public final class UserRepositoryTest {
    }
 
    @Test
-   public void testResetLoginCountForUsers() {
+   void testResetLoginCountForUsers() {
       DockerDatabaseTestUtil.insertDbUnitTestdata(entityManager, getClass().getResourceAsStream("/testdata.xml"));
 
       entityManager.getTransaction().begin();

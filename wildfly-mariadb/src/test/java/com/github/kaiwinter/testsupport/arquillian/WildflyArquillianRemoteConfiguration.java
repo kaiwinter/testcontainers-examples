@@ -31,7 +31,7 @@ public final class WildflyArquillianRemoteConfiguration {
        */
       public static final class ServletProtocolDefinition {
          /** Arquillian's name for the Servlet protocol. */
-         public static final String NAME = "Servlet 3.0";
+         public static final String NAME = "Servlet 5.0";
 
          /** The IP of the remote Wildfly server. */
          public static final String HOST_KEY = "host";

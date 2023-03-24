@@ -1,23 +1,23 @@
 package com.github.kaiwinter.testcontainers.wildfly.core;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.ScopeType;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.github.kaiwinter.testcontainers.wildfly.db.UserRepository;
 import com.github.kaiwinter.testcontainers.wildfly.db.UserRepositoryTest;
@@ -29,8 +29,8 @@ import com.github.kaiwinter.testsupport.db.DockerDatabaseTestUtil;
  * 
  * @see {@link UserRepositoryTest}.
  */
-@RunWith(Arquillian.class)
-public final class UserServiceTest {
+@ExtendWith(ArquillianExtension.class)
+final class UserServiceTest {
 
    @Inject
    private UserService userService;
@@ -59,7 +59,7 @@ public final class UserServiceTest {
    }
 
    @Test
-   public void testSumOfLogins() {
+   void testSumOfLogins() {
       DockerDatabaseTestUtil.insertDbUnitTestdata(entityManager, getClass().getResourceAsStream("/testdata.xml"));
       int sumOfLogins = userService.calculateSumOfLogins();
       assertEquals(9, sumOfLogins);

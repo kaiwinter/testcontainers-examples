@@ -1,13 +1,18 @@
 package com.github.kaiwinter.testsupport.db;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.persistence.EntityManager;
 import javax.script.ScriptException;
+
+import jakarta.persistence.EntityManager;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
@@ -18,14 +23,11 @@ import org.dbunit.ext.mysql.MySqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
-import org.junit.Assume;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.jdbc.ext.ScriptUtils;
+import org.testcontainers.ext.ScriptUtils;
+import org.testcontainers.jdbc.ContainerLessJdbcDelegate;
 import org.xml.sax.InputSource;
-
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 
 /**
  * Helper class to insert test data into a database.
@@ -51,8 +53,8 @@ public abstract class DockerDatabaseTestUtil {
             try {
                for (File file : sqlScripts) {
                   LOGGER.debug("INSERTing {}", file.getAbsolutePath());
-                  Assume.assumeTrue("SQL-Script not found", file.isFile());
-                  String sql = Resources.toString(file.toURI().toURL(), Charsets.UTF_8);
+                  assertTrue(file.isFile(), "SQL-Script not found");
+                  String sql = Files.readString(file.toPath(), StandardCharsets.UTF_8);
                   executeSqlScript(connection, file.getName(), sql);
                   LOGGER.debug("INSERTing {} ... done", file.getAbsolutePath());
                }
@@ -93,11 +95,7 @@ public abstract class DockerDatabaseTestUtil {
 
    private static void executeSqlScript(Connection connection, String scriptName, String sqlString)
       throws ScriptException {
-      boolean continueOnError = false;
-      boolean ignoreFailedDrops = true;
-      ScriptUtils.executeSqlScript(connection, scriptName, sqlString, continueOnError, ignoreFailedDrops, //
-         ScriptUtils.DEFAULT_COMMENT_PREFIX, ScriptUtils.DEFAULT_STATEMENT_SEPARATOR,
-         ScriptUtils.DEFAULT_BLOCK_COMMENT_START_DELIMITER, ScriptUtils.DEFAULT_BLOCK_COMMENT_END_DELIMITER);
+      ScriptUtils.executeDatabaseScript(new ContainerLessJdbcDelegate(connection), scriptName, sqlString);
    }
 
    /**

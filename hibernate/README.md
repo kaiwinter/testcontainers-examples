@@ -4,8 +4,8 @@ First the [`persistence.xml`](https://github.com/kaiwinter/testcontainers-exampl
 
 ```xml
 <properties>
-   <property name="javax.persistence.jdbc.driver" value="org.testcontainers.jdbc.ContainerDatabaseDriver" />
-   <property name="javax.persistence.jdbc.url" value="jdbc:tc:mysql:5.7://doesntmatter/test?TC_INITSCRIPT=DDL.sql" />
+   <property name="jakarta.persistence.jdbc.driver" value="org.testcontainers.jdbc.ContainerDatabaseDriver" />
+   <property name="jakarta.persistence.jdbc.url" value="jdbc:tc:mysql:5.7://doesntmatter/test?TC_INITSCRIPT=DDL.sql" />
    <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
 </properties>
 ```
@@ -26,12 +26,12 @@ This will make Hibernate parse the [`persistence.xml`](https://github.com/kaiwin
 The `EntityManager` will be pointing to the docker container and can be used as usual:
 
 ```java
-public final class UserTest {
+class UserTest {
    private static final Logger LOGGER = LoggerFactory.getLogger(UserTest.class);
    private static EntityManager entityManager = Persistence.createEntityManagerFactory("TestPU").createEntityManager();
 
    @Test
-   public void testSaveAndLoad() {
+   void testSaveAndLoad() {
       User user = new User();
       user.setUsername("user 1");
 

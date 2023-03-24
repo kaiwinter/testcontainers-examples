@@ -2,9 +2,10 @@ package com.github.kaiwinter.testcontainers.hibernate.db;
 
 import java.util.Collection;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import com.github.kaiwinter.testcontainers.hibernate.db.entity.User;
 
@@ -21,13 +22,13 @@ public final class UserRepository {
    }
 
    public User findByUsername(String username) {
-      Query query = entityManager.createQuery("SELECT u FROM User u WHERE username=?1");
+      TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE username=?1", User.class);
       query.setParameter(1, username);
-      return (User) query.getSingleResult();
+      return query.getSingleResult();
    }
 
    public Collection<User> findAll() {
-      Query query = entityManager.createQuery("SELECT u FROM User u");
+      TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u", User.class);
       return query.getResultList();
    }
 

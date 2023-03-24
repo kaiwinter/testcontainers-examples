@@ -1,7 +1,9 @@
 package com.github.kaiwinter.testsupport.arquillian;
 
 import java.io.IOException;
-import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -16,18 +18,21 @@ import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.jdbc.ext.ScriptUtils;
+import org.testcontainers.ext.ScriptUtils;
+import org.testcontainers.jdbc.ContainerLessJdbcDelegate;
 
 import com.github.kaiwinter.testsupport.arquillian.WildflyArquillianRemoteConfiguration.ContainerConfiguration;
 import com.github.kaiwinter.testsupport.arquillian.WildflyArquillianRemoteConfiguration.ContainerConfiguration.ServletProtocolDefinition;
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 
 /**
  * Starts a docker container and configures Arquillian to use Wildfly in the docker container.
  */
 public final class WildflyMariaDBDockerExtension implements LoadableExtension {
+
+   private static final Logger LOGGER = LoggerFactory.getLogger(WildflyMariaDBDockerExtension.class);
 
    @Override
    public void register(ExtensionBuilder builder) {
@@ -39,7 +44,7 @@ public final class WildflyMariaDBDockerExtension implements LoadableExtension {
     */
    public static final class LoadContainerConfiguration {
 
-      private static final String DOCKER_IMAGE = "kaiwinter/wildfly10-mariadb:1.1";
+      private static final String DOCKER_IMAGE = "ghcr.io/kaiwinter/wildfly27-mariadb:latest";
 
       private static final int WILDFLY_HTTP_PORT = 8080;
       private static final int WILDFLY_MANAGEMENT_PORT = 9990;
@@ -68,7 +73,7 @@ public final class WildflyMariaDBDockerExtension implements LoadableExtension {
          Integer wildflyHttpPort = dockerContainer.getMappedPort(WILDFLY_HTTP_PORT);
          Integer wildflyManagementPort = dockerContainer.getMappedPort(WILDFLY_MANAGEMENT_PORT);
 
-         String containerIpAddress = dockerContainer.getContainerIpAddress();
+         String containerIpAddress = dockerContainer.getHost();
          Container arquillianContainer = registry.getContainers().iterator().next();
          ContainerDef containerConfiguration = arquillianContainer.getContainerConfiguration();
          containerConfiguration.property(ContainerConfiguration.MANAGEMENT_ADDRESS_KEY, containerIpAddress);
@@ -81,17 +86,19 @@ public final class WildflyMariaDBDockerExtension implements LoadableExtension {
             .getProtocolConfiguration(new ProtocolDescription(ServletProtocolDefinition.NAME));
          protocolConfiguration.property(ServletProtocolDefinition.HOST_KEY, containerIpAddress);
          protocolConfiguration.property(ServletProtocolDefinition.PORT_KEY, String.valueOf(wildflyHttpPort));
+
+         LOGGER.info("Wildfly ports, http: {}, management: {}", wildflyHttpPort, wildflyManagementPort);
       }
 
       private void setupDb(GenericContainer dockerContainer) {
-         String containerIpAddress = dockerContainer.getContainerIpAddress();
+         String containerIpAddress = dockerContainer.getHost();
          Integer port3306 = dockerContainer.getMappedPort(MARIADB_PORT);
          String connectionString = "jdbc:mysql://" + containerIpAddress + ":" + port3306 + "/test";
 
          try (Connection connection = DriverManager.getConnection(connectionString, "admin", "admin");) {
-            URL resource = Resources.getResource(DDL_FILE);
-            String sql = Resources.toString(resource, Charsets.UTF_8);
-            ScriptUtils.executeSqlScript(connection, "", sql);
+            String uri = WildflyArquillianRemoteConfiguration.class.getResource("/" + DDL_FILE).getPath();
+            String sql = Files.readString(Paths.get(uri), StandardCharsets.UTF_8);
+            ScriptUtils.executeDatabaseScript(new ContainerLessJdbcDelegate(connection), null, sql);
          } catch (SQLException | ScriptException | IOException e) {
             throw new RuntimeException(e);
          }

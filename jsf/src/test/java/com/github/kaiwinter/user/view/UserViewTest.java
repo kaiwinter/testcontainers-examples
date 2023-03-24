@@ -1,6 +1,6 @@
 package com.github.kaiwinter.user.view;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.util.List;
@@ -8,12 +8,12 @@ import java.util.List;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -25,9 +25,9 @@ import com.github.kaiwinter.user.service.UserService;
 /**
  * Tests the users.xhtml view.
  */
-@RunWith(Arquillian.class)
+@ExtendWith(ArquillianExtension.class)
 @RunAsClient
-public class UserViewTest {
+class UserViewTest {
 
    @Drone
    private WebDriver driver;
@@ -50,7 +50,7 @@ public class UserViewTest {
     * Tests if the xhtml page contains a table with five rows.
     */
    @Test
-   public void tableContainsData() {
+   void tableContainsData() {
       String address = WildflyDockerExtension.baseUrl + "users.xhtml";
       driver.get(address);
       WebElement datatable = driver.findElement(By.className("ui-datatable-data"));

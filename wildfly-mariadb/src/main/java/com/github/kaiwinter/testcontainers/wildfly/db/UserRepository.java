@@ -2,9 +2,11 @@ package com.github.kaiwinter.testcontainers.wildfly.db;
 
 import java.util.Collection;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import com.github.kaiwinter.testcontainers.wildfly.db.entity.User;
 
@@ -12,7 +14,8 @@ import com.github.kaiwinter.testcontainers.wildfly.db.entity.User;
 /**
  * A database repository which has test-worthy logic.
  */
-public final class UserRepository {
+@ApplicationScoped
+public class UserRepository {
 
    @PersistenceContext
    private EntityManager entityManager;
@@ -28,7 +31,7 @@ public final class UserRepository {
    }
 
    public Collection<User> findAll() {
-      Query query = entityManager.createQuery("SELECT u FROM User u");
+      TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u", User.class);
       return query.getResultList();
    }
 

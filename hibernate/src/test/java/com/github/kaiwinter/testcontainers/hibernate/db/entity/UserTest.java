@@ -1,11 +1,11 @@
 package com.github.kaiwinter.testcontainers.hibernate.db.entity;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Persistence;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,14 +14,14 @@ import org.slf4j.LoggerFactory;
  * {@link org.testcontainers.jdbc.ContainerDatabaseDriver} from the testcontainers library. This driver will start a
  * Docker container with a MySQL database. Hibernate then creates a Persistence Unit for this docker-database.
  */
-public final class UserTest {
+final class UserTest {
 
    private static final Logger LOGGER = LoggerFactory.getLogger(UserTest.class);
 
    private static EntityManager entityManager = Persistence.createEntityManagerFactory("TestPU").createEntityManager();
 
    @Test
-   public void testSaveAndLoad() {
+   void testSaveAndLoad() {
       User user = new User();
       user.setUsername("user 1");
 

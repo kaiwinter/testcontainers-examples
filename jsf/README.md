@@ -1,12 +1,12 @@
 ## testcontainers-examples: jsf
 
-For these tests a docker image is used which contains a Wildfly 14: [kaiwinter/wildfly14-mgmt-user](https://hub.docker.com/r/kaiwinter/wildfly14-mgmt-user).
+For these tests a docker image is used which contains a Wildfly 27: [kaiwinter/wildfly27-mgmt-user](https://hub.docker.com/r/kaiwinter/wildfly27-mgmt-user).
 A management user is set-up to let Arquillian deploy to this server.
 For the Arquillian deployment `wildfly-arquillian-container-remote` is used. 
 
 The tricky part is the dynamic configuration of Arquillian to deploy the application to Wildfly.
 This is necessary because testcontainers exposes the real application server port at a random port to support the parallel use of multiple containers.
-Arquillian is configured by the file `arquillian.xml` and it cannot be changed by an API dynamically [[GitHub Issue](https://github.com/wildfly/wildfly-arquillian/issues/72)].
+Arquillian is configured by the file `arquillian.xml` and it cannot be changed by an API dynamically.
 But there is the possibility to register a `org.jboss.arquillian.core.spi.LoadableExtension` which registers a listener on the configuration process (see [WildflyMariaDBDockerExtension](https://github.com/kaiwinter/testcontainers-examples/blob/master/jsf/src/test/java/com/github/kaiwinter/testsupport/arquillian/WildflyDockerExtension.java)).
 Arquillian can then be completely configured by the listener class and the [`arquillian.xml`](https://github.com/kaiwinter/testcontainers-examples/blob/master/jsf/src/test/resources/arquillian.xml) is almost empty:
 ```xml
@@ -14,7 +14,7 @@ Arquillian can then be completely configured by the listener class and the [`arq
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://jboss.org/schema/arquillian">
    <container qualifier="wildfly-docker" default="true">
-      <protocol type="Servlet 3.0" />
+      <protocol type="Servlet 5.0" />
    </container>
 </arquillian>
 ```
@@ -23,9 +23,9 @@ The listener class ([WildflyDockerExtension](https://github.com/kaiwinter/testco
 This is how the test class looks like. There is no difference from a normal Arquillian test. 
 
 ```java
-@RunWith(Arquillian.class)
+@ExtendWith(ArquillianExtension.class)
 @RunAsClient
-public final class UserViewTest {
+class UserViewTest {
 
    @Drone
    private WebDriver driver;
@@ -48,7 +48,7 @@ public final class UserViewTest {
     * Tests if the xhtml page contains a table with five rows.
     */
    @Test
-   public void tableContainsData() {
+   void tableContainsData() {
       String address = WildflyDockerExtension.baseUrl + "users.xhtml";
       driver.get(address);
       WebElement datatable = driver.findElement(By.className("ui-datatable-data"));

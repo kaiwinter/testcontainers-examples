@@ -10,7 +10,7 @@ public final class WildflyArquillianRemoteConfiguration {
    }
 
    /**
-    * Remote Wildfly configuration, host, port and admin account as well as the servlet protocol.
+    * Remote Wildfly configuration, host, port and admin account.
     */
    public static final class ContainerConfiguration {
 
@@ -25,20 +25,6 @@ public final class WildflyArquillianRemoteConfiguration {
 
       /** The management account password of the remote Wildfly server. */
       public static final String PASSWORD_KEY = "password";
-
-      /**
-       * The protocol to use for the communication in the test.
-       */
-      public static final class ServletProtocolDefinition {
-         /** Arquillian's name for the Servlet protocol. */
-         public static final String NAME = "Servlet 3.0";
-
-         /** The IP of the remote Wildfly server. */
-         public static final String HOST_KEY = "host";
-
-         /** The IP of the remote Wildfly (which is 8080 by default. */
-         public static final String PORT_KEY = "port";
-      }
    }
 
 }
