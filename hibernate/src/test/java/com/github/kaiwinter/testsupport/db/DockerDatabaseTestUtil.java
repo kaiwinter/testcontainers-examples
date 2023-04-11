@@ -34,7 +34,7 @@ import org.xml.sax.InputSource;
  */
 public abstract class DockerDatabaseTestUtil {
 
-   private static Logger LOGGER = LoggerFactory.getLogger(DockerDatabaseTestUtil.class);
+   private static final Logger LOGGER = LoggerFactory.getLogger(DockerDatabaseTestUtil.class);
 
    /**
     * Executes the passed sql files on the EntityManager.

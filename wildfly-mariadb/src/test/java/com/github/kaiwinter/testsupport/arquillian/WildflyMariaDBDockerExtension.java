@@ -60,7 +60,7 @@ public final class WildflyMariaDBDockerExtension implements LoadableExtension {
        * @param serviceLoader
        */
       public void registerInstance(@Observes ContainerRegistry registry, ServiceLoader serviceLoader) {
-         GenericContainer dockerContainer = new GenericContainer(DOCKER_IMAGE)
+         GenericContainer<?> dockerContainer = new GenericContainer<>(DOCKER_IMAGE)
             .withExposedPorts(WILDFLY_HTTP_PORT, WILDFLY_MANAGEMENT_PORT, MARIADB_PORT);
          dockerContainer.start();
 
@@ -69,7 +69,7 @@ public final class WildflyMariaDBDockerExtension implements LoadableExtension {
          setupDb(dockerContainer);
       }
 
-      private void configureArquillianForRemoteWildfly(GenericContainer dockerContainer, ContainerRegistry registry) {
+      private void configureArquillianForRemoteWildfly(GenericContainer<?> dockerContainer, ContainerRegistry registry) {
          Integer wildflyHttpPort = dockerContainer.getMappedPort(WILDFLY_HTTP_PORT);
          Integer wildflyManagementPort = dockerContainer.getMappedPort(WILDFLY_MANAGEMENT_PORT);
 
@@ -90,7 +90,7 @@ public final class WildflyMariaDBDockerExtension implements LoadableExtension {
          LOGGER.info("Wildfly ports, http: {}, management: {}", wildflyHttpPort, wildflyManagementPort);
       }
 
-      private void setupDb(GenericContainer dockerContainer) {
+      private void setupDb(GenericContainer<?> dockerContainer) {
          String containerIpAddress = dockerContainer.getHost();
          Integer port3306 = dockerContainer.getMappedPort(MARIADB_PORT);
          String connectionString = "jdbc:mysql://" + containerIpAddress + ":" + port3306 + "/test";
