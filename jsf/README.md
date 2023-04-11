@@ -1,6 +1,6 @@
 ## testcontainers-examples: jsf
 
-For these tests a docker image is used which contains a Wildfly 27: [kaiwinter/wildfly27-mgmt-user](https://hub.docker.com/r/kaiwinter/wildfly27-mgmt-user).
+For these tests a docker image is used which contains a Wildfly 27: [kaiwinter/wildfly27-mgmt-user](https://github.com/kaiwinter/wildfly27-mariadb/pkgs/container/wildfly27-mgmt-user).
 A management user is set-up to let Arquillian deploy to this server.
 For the Arquillian deployment `wildfly-arquillian-container-remote` is used. 
 

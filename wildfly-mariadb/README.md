@@ -1,6 +1,6 @@
 ## testcontainers-examples: wildfly-mariadb
 
-For these tests a docker image is used which contains a Wildfly 27 and a MariaDB installation: [kaiwinter/wildfly27-mariadb](https://hub.docker.com/r/kaiwinter/wildfly27-mariadb/).
+For these tests a docker image is used which contains a Wildfly 27 and a MariaDB installation: [kaiwinter/wildfly27-mariadb](https://github.com/kaiwinter/wildfly27-mariadb/pkgs/container/wildfly27-mariadb).
 Wildfly is configured to use the MariaDB and a management user is set-up to let Arquillian deploy to this server.
 For the Arquillian deployment `wildfly-arquillian-container-remote` is used. 
 
