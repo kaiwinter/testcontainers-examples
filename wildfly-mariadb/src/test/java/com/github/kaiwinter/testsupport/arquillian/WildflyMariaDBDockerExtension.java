@@ -1,9 +1,7 @@
 package com.github.kaiwinter.testsupport.arquillian;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -23,6 +21,8 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.ext.ScriptUtils;
 import org.testcontainers.jdbc.ContainerLessJdbcDelegate;
+import org.testcontainers.shaded.com.google.common.base.Charsets;
+import org.testcontainers.shaded.com.google.common.io.Resources;
 
 import com.github.kaiwinter.testsupport.arquillian.WildflyArquillianRemoteConfiguration.ContainerConfiguration;
 import com.github.kaiwinter.testsupport.arquillian.WildflyArquillianRemoteConfiguration.ContainerConfiguration.ServletProtocolDefinition;
@@ -96,9 +96,9 @@ public final class WildflyMariaDBDockerExtension implements LoadableExtension {
          String connectionString = "jdbc:mysql://" + containerIpAddress + ":" + port3306 + "/test";
 
          try (Connection connection = DriverManager.getConnection(connectionString, "admin", "admin");) {
-            String uri = WildflyArquillianRemoteConfiguration.class.getResource("/" + DDL_FILE).getPath();
-            String sql = Files.readString(Paths.get(uri), StandardCharsets.UTF_8);
-            ScriptUtils.executeDatabaseScript(new ContainerLessJdbcDelegate(connection), null, sql);
+            URL resource = Resources.getResource(DDL_FILE);
+            String sql = Resources.toString(resource, Charsets.UTF_8);
+            ScriptUtils.executeDatabaseScript(new ContainerLessJdbcDelegate(connection), "", sql);
          } catch (SQLException | ScriptException | IOException e) {
             throw new RuntimeException(e);
          }
